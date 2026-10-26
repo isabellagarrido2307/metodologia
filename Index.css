@@ -1,0 +1,48 @@
+/* Fondo minimalista y limpio */
+.bg-clean-light {
+    background-color: #f8fafc;
+}
+
+/* Clases auxiliares para tipografía y etiquetas */
+.fs-7 {
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+}
+
+.tracking-wider {
+    letter-spacing: 0.08em;
+}
+
+/* Sombra elegante y difuminada propia de interfaces modernas */
+.shadow-custom {
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Comportamiento de los inputs al recibir enfoque */
+.form-control:focus {
+    background-color: #fff !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 272, 0.12) !important;
+    border-color: #0d6efd !important;
+}
+
+.form-control {
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+/* Estilo del botón principal de acceso */
+.btn-primary {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    transform: translateY(-1px);
+}
