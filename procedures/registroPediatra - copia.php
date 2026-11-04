@@ -2,7 +2,7 @@
 session_start();
 include('bddConexion.php'); 
 
-$pagina_destino = 'registro.php'; 
+$pagina_destino = '../registro.php'; 
 
 function limpiar_dato($data){
     $data = trim($data);
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'text' => 'Ya existe un pediatra registrado con esta cédula o correo electrónico.'
                 ];
                 $stmt_verificar->close();
-                header("Location: registro.php");
+                header("Location: ../registro.php");
                 exit();
             }
             $stmt_verificar->close();
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'title' => '¡Registro Exitoso!',
                     'text' => 'Dr(a). ' . $nombres . ', ya puede iniciar sesión en el sistema.'
                 ];
-                $pagina_destino = 'index.php'; // Redirigir al login tras registrarse con éxito
+                $pagina_destino = '../Index.php'; // Redirigir al login tras registrarse con éxito
             } else {
                 $_SESSION['swal_message'] = [
                     'icon' => 'error',
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 
 } else {
-    header("Location: registro.php");
+    header("Location: ../registro.php");
     exit();
 }
 ?>

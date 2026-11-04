@@ -1,0 +1,106 @@
+/* =================================================_ */
+/* PALETA DE DISEÑO MEDIPORTAL (Tonos Suaves y Profesionales) */
+/* #f9fcfe - Fondo general limpio */
+/* #eaf4fe - Fondos de tarjetas y contenedores sutiles */
+/* #9bc7f8 - Acentos, bordes activos y botones principales */
+/* =================================================_ */
+
+/* Fondo general de la página */
+body {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Opcional: Asegurar que los inputs y botones también hereden la tipografía */
+input, button, select, textarea {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.bg-clean-light {
+    background-color: #f9fcfe !important;
+}
+
+.fs-7 {
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+}
+
+.tracking-wider {
+    letter-spacing: 0.08em;
+}
+
+/* Sombra suave basada en tu paleta celeste */
+.shadow-custom {
+    box-shadow: 0 20px 40px rgba(155, 199, 248, 0.18) !important;
+}
+
+/* Comportamiento de los inputs al recibir enfoque */
+.form-control:focus {
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(155, 199, 248, 0.4) !important;
+    border-color: #9bc7f8 !important;
+}
+.grupo-contrasena:focus-within {
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(155, 199, 248, 0.4) !important;
+    border-color: #9bc7f8 !important;
+}
+.form-control {
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: #ffffff;
+    border-color: #eaf4fe;
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+/* Botón principal unificado con el tono #9bc7f8 pero con texto legible */
+.btn_iniciar {
+    background-color: #9bc7f8 !important;
+    border-color: #9bc7f8 !important;
+    color: #1e293b !important; /* Texto oscuro de alta legibilidad */
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    border-radius: 0.375rem; /* Bordes ligeramente redondeados */
+    
+}
+
+.btn_iniciar:hover {
+    background-color: #88b7f5 !important;
+    border-color: #88b7f5 !important;
+    color: #0f172a !important;
+    transform: translateY(-1px);
+}
+
+/* Tarjetas o contenedores con fondo celeste suave (#eaf4fe) */
+.card-custom {
+    background-color: #eaf4fe !important;
+    border: 1px solid rgba(155, 199, 248, 0.4);
+}
+
+.input-group.input_estilo {
+    border-radius: 0.75rem !important;
+    overflow: hidden; 
+    border: 1px solid #eaf4fe !important;
+    border-color: #88b7f5 !important;
+}
+
+.input_estilo {
+    border-radius: 0.75rem !important;
+    border: 1px solid !important;
+    border-color: #88b7f5 !important;
+}
+
+/* Clases utilitarias para reemplazar textos o acentos brillantes en el HTML */
+.text-custom-blue {
+    color: #4a80bc !important; /* Reemplaza al azul eléctrico brillante en títulos */
+}
+
+a.text-decoration-none, .text-primary-soft {
+    color: #4a80bc !important; /* Para enlaces como "¿Olvidó su contraseña?" */
+}
+
+a.text-decoration-none:hover {
+    color: #2c5e9a !important;
+}

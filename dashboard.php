@@ -1,11 +1,9 @@
 <?php
 session_start();
-// Opcional: Validar si el médico ha iniciado sesión
-// if (!isset($_SESSION['id_pediatra'])) { header("Location: index.php"); exit(); }
-$nombre_medico = $_SESSION['nombre'] ?? 'Sarah Jenkins';
+include __DIR__ . '/templates/header.php';
 
-// 1. Incluir la conexión a la base de datos
-include('bddConexion.php');
+$seccion_activa = 'inicio';
+include('procedures/bddConexion.php');
 
 // 2. Consultar el total de pacientes activos para la tarjeta de estadística
 $sql_total = "SELECT COUNT(*) as total FROM pacientes WHERE activo = 1";
@@ -17,79 +15,15 @@ $total_pacientes = $fila_total['total'] ?? 0;
 $sql_recientes = "SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, created_at FROM pacientes ORDER BY created_at DESC LIMIT 5";
 $resultado_recientes = $mysqli->query($sql_recientes);
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediPortal - Dashboard Principal</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Hoja de estilos personalizada -->
-    <link rel="stylesheet" href="dashboard.css">
-</head>
+
+
 <body class="cuerpo-dashboard">
 
     <div class="contenedor-fluid-personalizado">
         <div class="fila-principal">
             
             <!-- BARRA LATERAL (SIDEBAR) -->
-            <nav class="col-md-3 col-lg-2 barra-lateral d-flex flex-column justify-content-between min-vh-100">
-                <div>
-                    <!-- Logotipo / Marca -->
-                    <div class="contenedor-logo">
-                        <div class="icono-logo">
-                            <i class="bi bi-plus-lg"></i>
-                        </div>
-                        <div>
-                            <span class="texto-logo-principal">MediPortal</span>
-                        </div>
-                    </div>
-
-                    <!-- Sección Workspace -->
-                    <div class="bloque-menu">
-                        <ul class="nav flex-column lista-enlaces">
-                            <li class="nav-item">
-                                <a href="#" class="enlace-navegacion activo">
-                                    <i class="bi bi-house-door"></i> Inicio
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="enlace-navegacion">
-                                    <i class="bi bi-people"></i> Pacientes
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="enlace-navegacion">
-                                    <i class="bi bi-journal-medical"></i> Clinical Notes
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="enlace-navegacion">
-                                    <i class="bi bi-shield-plus"></i> Registros de Vacunación
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="enlace-navegacion">
-                                    <i class="bi bi-file-earmark-text"></i> ¿Cómo usar el sistema?
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="enlace-navegacion">
-                                    <i class="bi bi-gear"></i> Configuración
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="cerrarSesion.php" class="enlace-navegacion">
-                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <?php include __DIR__ . '/templates/sidebar.php'; ?>
 
             <!-- CONTENIDO PRINCIPAL -->
             <main class="col-md-9 col-lg-10 ms-sm-auto area-contenido">
@@ -148,7 +82,7 @@ $resultado_recientes = $mysqli->query($sql_recientes);
                                             <div class="info-item-izq">
                                                 <div>
                                                     <!-- Mostramos el nombre y apellido real del paciente -->
-                                                    <h6 class="nombre-item"><?php echo htmlspecialchars($paciente['primer_nombre'] . ' ' . $paciente['segundo_nombre'] . ' ' . $paciente['primer_apellido'] . ' ' . $paciente['segundo_apellido']); ?></h6>
+                                                    <p class="nombre-item"><?php echo htmlspecialchars($paciente['primer_nombre'] . ' ' . $paciente['segundo_nombre'] . ' ' . $paciente['primer_apellido'] . ' ' . $paciente['segundo_apellido']); ?></p>
                                                     <small class="subtitulo-item">Registrado el: <?php echo date('d/m/Y', strtotime($paciente['created_at'])); ?></small>
                                                 </div>
                                             </div>
@@ -182,7 +116,7 @@ $resultado_recientes = $mysqli->query($sql_recientes);
                                             <small class="texto-alerta-normal">Al día</small>
                                         </div>
                                     </div>
-                                    <button class="boton-revision">Review</button>
+                                    <button class="boton-revision">Revisar</button>
                                 </div>
                             </div>
                         </div>
@@ -198,5 +132,12 @@ $resultado_recientes = $mysqli->query($sql_recientes);
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <?php if (isset($_SESSION['swal_message'])): ?>
+    <script>
+        Swal.fire(<?= json_encode($_SESSION['swal_message'], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>);
+    </script>
+    <?php unset($_SESSION['swal_message']); endif; ?>
 </body>
 </html>

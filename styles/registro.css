@@ -1,6 +1,11 @@
-/* ==========================================
-   ESTILOS DEL MÓDULO DE REGISTRO
-   ================================---------- */
+body {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Opcional: Asegurar que los inputs y botones también hereden la tipografía */
+input, button, select, textarea {
+    font-family: 'Montserrat', sans-serif !important;
+}
 .cuerpo-registro {
     background-color: #f8fafc;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

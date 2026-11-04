@@ -1,19 +1,8 @@
 <?php
 session_start();
+include __DIR__ . '/templates/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro Médico El Valle - Registro Profesional</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Hoja de estilos personalizada -->
-    <link rel="stylesheet" href="registro.css">
-</head>
+
 <body class="cuerpo-registro min-vh-100 d-flex align-items-center py-5">
 
     <div class="container">
@@ -41,7 +30,7 @@ session_start();
                     <?php endif; ?>
 
                     <!-- Formulario de Registro -->
-                    <form action="registroPediatra.php" method="POST">
+                    <form action="procedures/registroPediatra.php" method="POST">
                         
                         <div class="row">
                             <!-- Nombres -->

@@ -1,0 +1,571 @@
+/* ========================================================== */
+/* TIPOGRAFÍA GLOBAL Y CONFIGURACIÓN GENERAL                  */
+/* ========================================================== */
+body, input, button, select, textarea {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.cuerpo-dashboard {
+    background-color: #f9fcfe !important;
+    font-family: 'Montserrat', sans-serif !important;
+    color: #1e293b;
+}
+
+.contenedor-fluid-personalizado {
+    padding: 0;
+    width: 100%;
+}
+
+.fila-principal {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+/* ========================================================== */
+/* BARRA LATERAL (SIDEBAR)                                    */
+/* ========================================================== */
+.barra-lateral {
+    background-color: #ffffff;
+    border-right: 1px solid #eaf4fe;
+    padding: 1.25rem;
+    box-shadow: 1px 0 15px rgba(155, 199, 248, 0.08);
+    z-index: 100;
+}
+
+.contenedor-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.icono-logo {
+    background-color: #9bc7f8 !important;
+    color: #1e293b !important;
+    border-radius: 0.5rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    box-shadow: 0 2px 5px rgba(155, 199, 248, 0.3);
+}
+
+.texto-logo-principal {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1e293b;
+    display: block;
+    line-height: 1.2;
+}
+
+.texto-logo-sub {
+    font-size: 0.72rem;
+    color: #64748b;
+}
+
+.bloque-menu {
+    margin-bottom: 1.5rem;
+}
+
+.titulo-seccion {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.lista-enlaces {
+    gap: 0.25rem;
+}
+
+.enlace-navegacion {
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.enlace-navegacion i {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.enlace-navegacion:hover {
+    background-color: #eaf4fe;
+    color: #4a80bc;
+}
+
+.enlace-navegacion.activo {
+    background-color: #eaf4fe !important;
+    color: #4a80bc !important;
+    font-weight: 600;
+}
+
+.perfil-usuario-pie {
+    padding-top: 1rem;
+    border-top: 1px solid #eaf4fe;
+    margin-top: auto;
+}
+
+.contenedor-perfil {
+    display: flex;
+    align-items: center;
+}
+
+.avatar-medico {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+}
+
+.info-medico {
+    overflow: hidden;
+}
+
+.nombre-medico {
+    margin-bottom: 0;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rol-medico {
+    font-size: 0.72rem;
+    color: #64748b;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================
+   CONTENIDO PRINCIPAL Y CABECERA
+   ================================---------- */
+.area-contenido {
+    padding: 2rem;
+    background-color: #f9fcfe;
+    min-height: 100vh;
+}
+
+.cabecera-principal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eaf4fe;
+}
+
+.titulo-pagina {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.2rem;
+    font-size: 1.5rem;
+}
+
+.subtitulo-pagina {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+.acciones-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.barra-busqueda {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #eaf4fe;
+    border-radius: 50rem;
+    padding: 0.25rem 0.75rem;
+    width: 270px;
+    box-shadow: 0 1px 2px rgba(155, 199, 248, 0.1);
+    transition: all 0.2s ease;
+}
+
+.barra-busqueda:focus-within {
+    border-color: #9bc7f8;
+    box-shadow: 0 0 0 0.25rem rgba(155, 199, 248, 0.4);
+}
+
+.icono-busqueda {
+    color: #94a3b8;
+    margin-right: 0.5rem;
+}
+
+.input-busqueda {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.85rem;
+    width: 100%;
+    color: #1e293b;
+}
+
+.boton-notificacion {
+    background-color: #ffffff;
+    border: 1px solid #eaf4fe;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.indicador-alerta {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    border: 1px solid #ffffff;
+}
+
+.avatar-superior {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #eaf4fe;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* ==========================================
+   TARJETAS Y ESTADÍSTICAS
+   ================================---------- */
+.tarjeta-dashboard {
+    background-color: #ffffff;
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(155, 199, 248, 0.18) !important;
+    padding: 1.25rem;
+    height: 100%;
+    align-items: start;
+}
+
+.rejilla-estadisticas {
+    margin-bottom: 1.5rem;
+}
+
+.encabezado-tarjeta-stat {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.icono-stat {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.icono-azul { background-color: #eaf4fe; color: #4a80bc; }
+.icono-cian { background-color: #eaf4fe; color: #4a80bc; }
+.icono-amarillo { background-color: #fefce8; color: #ca8a04; }
+.icono-rojo { background-color: #fef2f2; color: #dc2626; }
+
+.etiqueta-stat {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.valor-stat {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.75rem;
+    margin-bottom: 0.2rem;
+}
+
+.detalle-stat {
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+/* ==========================================
+   SECCIONES Y ELEMENTOS DE LISTAS
+   ================================---------- */
+.contenedor-seccion {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.encabezado-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.titulo-seccion-principal {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+}
+
+.descripcion-seccion {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.enlace-accion {
+    color: #4a80bc !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.enlace-accion:hover {
+    color: #2c5e9a !important;
+    text-decoration: underline;
+}
+
+.lista-elementos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.elemento-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.elemento-item:hover {
+    background-color: #f9fcfe;
+}
+
+.info-item-izq {
+    display: flex;
+    align-items: center;
+}
+
+.imagen-item {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+}
+
+.nombre-item {
+    margin-bottom: 0;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.subtitulo-item {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.caja-tiempo {
+    background-color: #eaf4fe;
+    text-align: center;
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    margin-right: 0.75rem;
+    min-width: 70px;
+}
+
+.hora-cita {
+    display: block;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.85rem;
+}
+
+.dia-cita {
+    color: #64748b;
+    font-size: 0.7rem;
+}
+
+.boton-secundario {
+    background-color: #eaf4fe;
+    border: 1px solid #eaf4fe;
+    color: #4a80bc;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 50rem;
+    padding: 0.25rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.boton-secundario:hover {
+    background-color: #9bc7f8;
+    border-color: #9bc7f8;
+    color: #1e293b;
+}
+
+/* ==========================================
+   ACCESO RÁPIDO Y WIDGET DE VACUNAS
+   ================================---------- */
+.lista-acceso-rapido {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.enlace-acceso-rapido {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    color: inherit;
+}
+
+.enlace-acceso-rapido:hover {
+    background-color: #f9fcfe;
+}
+
+.info-acceso {
+    display: flex;
+    align-items: center;
+}
+
+.icono-acceso {
+    padding: 0.5rem;
+    border-radius: 0.4rem;
+    margin-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.fondo-azul { background-color: #eaf4fe; color: #4a80bc; }
+.fondo-cian { background-color: #eaf4fe; color: #4a80bc; }
+.fondo-amarillo { background-color: #fefce8; color: #ca8a04; }
+.fondo-verde { background-color: #f0fdf4; color: #16a34a; }
+
+.titulo-acceso {
+    display: block;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+.subtitulo-acceso {
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.flecha-acceso {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.lista-vacunas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.elemento-vacuna {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.info-vacuna {
+    display: flex;
+    align-items: center;
+}
+
+.avatar-vacuna {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+}
+
+.nombre-vacuna {
+    margin-bottom: 0;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.85rem;
+}
+
+.texto-alerta-normal {
+    color: #64748b;
+    font-size: 0.7rem;
+}
+
+.texto-alerta-critica {
+    color: #dc2626;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.boton-revision {
+    background-color: #9bc7f8;
+    border: 1px solid #9bc7f8;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-radius: 50rem;
+    padding: 0.25rem 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.boton-revision:hover {
+    background-color: #88b7f5;
+    border-color: #88b7f5;
+    color: #0f172a;
+}
+
+.boton-revision-critica {
+    background-color: transparent;
+    border: 1px solid #dc2626;
+    color: #dc2626;
+    font-size: 0.75rem;
+    border-radius: 50rem;
+    padding: 0.2rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.boton-revision-critica:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+}

@@ -2,7 +2,7 @@
 session_start();
 include('bddConexion.php'); 
 
-$pagina_destino = 'index.php'; 
+$pagina_destino = '../Index.php'; 
 
 function validate($data){
     $data = trim($data);
@@ -41,7 +41,7 @@ if (isset($_POST['Cedula']) && isset($_POST['password'])) {
                         'text' => 'Dr(a). ' . htmlspecialchars($row['nombres'])
                     ];
                     
-                    $pagina_destino = 'dashboard.php'; 
+                    $pagina_destino = '../dashboard.php'; 
                 } else {
                     // Contraseña incorrecta
                     $_SESSION['swal_message'] = [
@@ -49,7 +49,7 @@ if (isset($_POST['Cedula']) && isset($_POST['password'])) {
                         'title' => 'Error de Autenticación',
                         'text' => 'La contraseña ingresada es incorrecta.'
                     ];
-                    $pagina_destino = 'Index.php';
+                    $pagina_destino = '../Index.php';
                 }
                 
             } else {
@@ -59,7 +59,7 @@ if (isset($_POST['Cedula']) && isset($_POST['password'])) {
                     'title' => 'No Encontrado',
                     'text' => 'No se encontró ningún pediatra registrado con esa cédula.'
                 ];
-                $pagina_destino = 'Index.php'; 
+                $pagina_destino = '../Index.php'; 
             }
         } else {
             $_SESSION['swal_message'] = [
@@ -67,7 +67,7 @@ if (isset($_POST['Cedula']) && isset($_POST['password'])) {
                 'title' => 'Error Interno',
                 'text' => 'Error al ejecutar la consulta: ' . $stmt->error
             ];
-            $pagina_destino = 'Index.php';
+            $pagina_destino = '../Index.php';
         }
         $stmt->close();
         
@@ -77,7 +77,7 @@ if (isset($_POST['Cedula']) && isset($_POST['password'])) {
             'title' => 'Error Interno',
             'text' => 'Error al preparar la consulta SQL: ' . $mysqli->error
         ];
-        $pagina_destino = 'Index.php'; 
+        $pagina_destino = '../Index.php'; 
     }
     
     $mysqli->close(); 
@@ -85,7 +85,7 @@ if (isset($_POST['Cedula']) && isset($_POST['password'])) {
     exit();
 
 } else {
-    header("Location: Index.php");
+    header("Location:../Index.php");
     exit();
 }
 ?>
