@@ -119,7 +119,7 @@ $resultado_pacientes = $mysqli->query($sql);
                                     <th scope="col" class="pb-3 fw-bold">PACIENTE</th>
                                     <th scope="col" class="pb-3 fw-bold">FECHA NACIMIENTO</th>
                                     <th scope="col" class="pb-3 fw-bold">FECHA REGISTRO</th>
-                                    <th scope="col" class="pb-3 fw-bold text-end">ACCIONES</th>
+                                    <th scope="col" class="pb-3 fw-bold">ACCIONES</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -151,14 +151,14 @@ $resultado_pacientes = $mysqli->query($sql);
                                                 </span>
                                             </td>
 
-                                            <td class="text-end">
+                                            <td>
                                                 <div class="d-inline-flex align-items-center justify-content-end gap-1 flex-wrap">
                                                     <a href="descargar_expediente.php?id=<?php echo $paciente['id_paciente']; ?>" 
                                                        target="_blank"
                                                        class="boton-secundario text-decoration-none d-inline-flex align-items-center justify-content-center gap-1 py-1 px-2"
                                                        title="Descargar expediente médico en PDF"
                                                        style="font-size: 0.8rem; font-weight: 600; color: #dc2626 !important; background-color: #fff1f2; border-color: #fecaca;">
-                                                        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                                                        <i class="bi bi-file-earmark-pdf-fill"></i> 
                                                     </a>
                                                     <button type="button" 
                                                             class="boton-secundario text-decoration-none border-0 d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3 btn-abrir-antecedentes"
@@ -168,12 +168,12 @@ $resultado_pacientes = $mysqli->query($sql);
                                                             data-redirect="pacientes.php"
                                                             title="Gestionar antecedentes y datos de emergencia"
                                                             style="font-size: 0.8rem; font-weight: 600;">
-                                                        <i class="bi bi-clipboard2-pulse"></i> Antecedentes
+                                                        <i class="bi bi-clipboard2-pulse"></i> 
                                                     </button>
                                                     <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" 
                                                        class="boton-secundario text-decoration-none d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3"
                                                        style="font-size: 0.8rem; font-weight: 600;">
-                                                        <i class="bi bi-folder2-open"></i> Ver Expediente
+                                                        <i class="bi bi-folder2-open"></i>
                                                     </a>
                                                 </div>
                                             </td>
