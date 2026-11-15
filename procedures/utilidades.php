@@ -393,49 +393,49 @@ if (!function_exists('renderizar_antecedentes_html')) {
         $vacio = empty($datos['emergencia']) && empty($datos['condiciones']) && empty($datos['grupo_sanguineo']) && empty($datos['otros']);
 
         if ($vacio) {
-            return '<span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Sin antecedentes registrados.</span>';
+            return '<span class="text-muted d-block py-1" style="font-size: 0.86rem;"><i class="bi bi-info-circle me-1"></i>Sin antecedentes registrados.</span>';
         }
 
         $html = '<div class="d-flex flex-column gap-3">';
 
         // 1. Datos críticos y Alertas de emergencia
         if (!empty($datos['grupo_sanguineo']) || !empty($datos['emergencia'])) {
-            $html .= '<div class="p-3 rounded-3" style="background-color: #fef2f2; border: 1px solid #fee2e2;">';
-            $html .= '<div class="d-flex align-items-center gap-2 mb-2 text-danger fw-bold fs-7 text-uppercase" style="letter-spacing: 0.04em;">';
+            $html .= '<div class="p-3 rounded-3" style="background-color: #fff9f9; border: 1.5px solid #fecaca;">';
+            $html .= '<div class="d-flex align-items-center gap-2 mb-2 text-danger fw-bold text-uppercase" style="letter-spacing: 0.04em; font-size: 0.81rem;">';
             $html .= '<i class="bi bi-exclamation-octagon-fill"></i> Alertas y Datos Críticos de Emergencia';
             $html .= '</div>';
             $html .= '<div class="d-flex flex-wrap gap-2 align-items-center">';
 
             if (!empty($datos['grupo_sanguineo'])) {
-                $html .= '<span class="badge bg-danger text-white px-2 py-1 shadow-sm fs-7"><i class="bi bi-droplet-fill me-1"></i>Grupo: ' . htmlspecialchars($datos['grupo_sanguineo']) . '</span>';
+                $html .= '<span class="badge bg-danger text-white px-2 py-1 shadow-sm" style="font-size: 0.8rem; font-weight: 600;"><i class="bi bi-droplet-fill me-1"></i>Grupo: ' . htmlspecialchars($datos['grupo_sanguineo']) . '</span>';
             }
 
             foreach ($datos['emergencia'] as $item) {
-                $html .= '<span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-2 py-1 fs-7"><i class="bi bi-exclamation-triangle-fill me-1"></i>' . htmlspecialchars($item) . '</span>';
+                $html .= '<span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-2 py-1" style="font-size: 0.8rem; font-weight: 500;"><i class="bi bi-exclamation-triangle-fill me-1"></i>' . htmlspecialchars($item) . '</span>';
             }
             $html .= '</div></div>';
         }
 
         // 2. Condiciones comunes
         if (!empty($datos['condiciones'])) {
-            $html .= '<div class="p-3 rounded-3" style="background-color: #f0f7ff; border: 1px solid #dbeafe;">';
-            $html .= '<div class="d-flex align-items-center gap-2 mb-2 text-primary fw-bold fs-7 text-uppercase" style="letter-spacing: 0.04em;">';
+            $html .= '<div class="p-3 rounded-3" style="background-color: #f8fbff; border: 1.5px solid #dbeafe;">';
+            $html .= '<div class="d-flex align-items-center gap-2 mb-2 text-primary fw-bold text-uppercase" style="letter-spacing: 0.04em; font-size: 0.81rem;">';
             $html .= '<i class="bi bi-heart-pulse-fill"></i> Condiciones Médicas Comunes';
             $html .= '</div>';
             $html .= '<div class="d-flex flex-wrap gap-2">';
             foreach ($datos['condiciones'] as $cond) {
-                $html .= '<span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle px-2 py-1 fs-7"><i class="bi bi-check-circle-fill me-1"></i>' . htmlspecialchars($cond) . '</span>';
+                $html .= '<span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle px-2 py-1" style="font-size: 0.8rem; font-weight: 500;"><i class="bi bi-check-circle-fill me-1"></i>' . htmlspecialchars($cond) . '</span>';
             }
             $html .= '</div></div>';
         }
 
         // 3. Otros antecedentes
         if (!empty($datos['otros'])) {
-            $html .= '<div class="p-3 rounded-3" style="background-color: #f8fafc; border: 1px solid #e2e8f0;">';
-            $html .= '<div class="d-flex align-items-center gap-2 mb-2 text-secondary fw-bold fs-7 text-uppercase" style="letter-spacing: 0.04em;">';
+            $html .= '<div class="p-3 rounded-3" style="background-color: #ffffff; border: 1.5px solid #e2e8f0;">';
+            $html .= '<div class="d-flex align-items-center gap-2 mb-2 text-secondary fw-bold text-uppercase" style="letter-spacing: 0.04em; font-size: 0.81rem;">';
             $html .= '<i class="bi bi-card-text"></i> Otros Antecedentes Registrados';
             $html .= '</div>';
-            $html .= '<ul class="mb-0 ps-3 small text-secondary">';
+            $html .= '<ul class="mb-0 ps-3 text-secondary" style="font-size: 0.85rem; line-height: 1.45;">';
             foreach ($datos['otros'] as $otro) {
                 $html .= '<li class="mb-1">' . htmlspecialchars($otro) . '</li>';
             }

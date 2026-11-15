@@ -145,49 +145,45 @@ $grupos_lista      = lista_grupos_sanguineos();
                         <!-- 3. ANTECEDENTES MÉDICOS Y DATOS DE EMERGENCIA -->
                         <div class="mt-4 mb-4 pt-3 border-top border-light-subtle">
                             <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="fw-bold text-uppercase fs-7 mb-0" style="color: #4a80bc; letter-spacing: 0.05em;">
+                                <h6 class="fw-bold text-uppercase mb-0" style="color: #4a80bc; letter-spacing: 0.05em; font-size: 0.88rem;">
                                     3. Antecedentes Médicos y Datos de Emergencia
                                 </h6>
-                                <span class="badge bg-light text-secondary border">Ficha Médica</span>
+                                <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 0.76rem;">Ficha Médica</span>
                             </div>
 
                             <!-- DATOS DE EMERGENCIA Y GRUPO SANGUÍNEO -->
-                            <div class="p-3 rounded-4 mb-3" style="background-color: #fff8f8; border: 1.5px solid #fecaca;">
+                            <div class="p-3 rounded-4 mb-3" style="background-color: #fff9f9; border: 1.5px solid #fecaca;">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 pb-2 border-bottom border-danger-subtle">
-                                    <div class="d-flex align-items-center gap-2 text-danger fw-bold fs-7 text-uppercase" style="letter-spacing: 0.05em;">
+                                    <div class="d-flex align-items-center gap-2 text-danger fw-bold text-uppercase" style="letter-spacing: 0.04em; font-size: 0.82rem;">
                                         <i class="bi bi-exclamation-octagon-fill fs-6"></i>
                                         <span>Datos Médicos Críticos y Emergencia</span>
                                     </div>
-                                    <span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-2 py-1 fs-7">
+                                    <span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle px-2 py-1" style="font-size: 0.74rem;">
                                         Información Vital
                                     </span>
                                 </div>
 
                                 <!-- Grupo Sanguíneo y Factor Rh -->
-                                <div class="row align-items-center mb-3 g-2">
-                                    <label for="grupo_sanguineo" class="col-sm-4 col-form-label col-form-label-sm fw-semibold text-danger">
-                                        <i class="bi bi-droplet-fill me-1"></i> Grupo Sanguíneo y Factor Rh:
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-3 p-2 px-3 rounded-3 bg-white border border-danger-subtle">
+                                    <label for="grupo_sanguineo" class="fw-semibold text-danger mb-0 d-flex align-items-center gap-1" style="font-size: 0.86rem; min-width: 220px;">
+                                        <i class="bi bi-droplet-fill"></i> Grupo Sanguíneo y Factor Rh:
                                     </label>
-                                    <div class="col-sm-8 col-md-5">
-                                        <select class="form-select form-select-sm" id="grupo_sanguineo" name="grupo_sanguineo" style="border-color: #fca5a5; background-color: #ffffff;">
-                                            <option value="">No determinado / Desconocido</option>
-                                            <?php foreach ($grupos_lista as $grupo): ?>
-                                                <option value="<?php echo htmlspecialchars($grupo); ?>"><?php echo htmlspecialchars($grupo); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
+                                    <select class="form-select form-select-sm" id="grupo_sanguineo" name="grupo_sanguineo" style="max-width: 280px; font-size: 0.86rem; border-color: #fca5a5; background-color: #ffffff;">
+                                        <option value="">No determinado / Desconocido</option>
+                                        <?php foreach ($grupos_lista as $grupo): ?>
+                                            <option value="<?php echo htmlspecialchars($grupo); ?>"><?php echo htmlspecialchars($grupo); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
 
                                 <!-- Checkboxes de Emergencia -->
                                 <div class="row g-2">
                                     <?php foreach ($emergencias_lista as $idx => $emergencia): ?>
                                         <div class="col-md-6">
-                                            <div class="form-check p-2 rounded-2 h-100 d-flex align-items-start gap-2" style="background-color: #ffffff; border: 1px solid #fee2e2;">
-                                                <input class="form-check-input mt-1" type="checkbox" name="datos_emergencia[]" value="<?php echo htmlspecialchars($emergencia); ?>" id="reg_eme_<?php echo $idx; ?>" style="accent-color: #dc2626; cursor: pointer;">
-                                                <label class="form-check-label small fw-semibold text-secondary" for="reg_eme_<?php echo $idx; ?>" style="cursor: pointer; line-height: 1.3;">
-                                                    <?php echo htmlspecialchars($emergencia); ?>
-                                                </label>
-                                            </div>
+                                            <label class="item-checkbox-antecedente emergencia-box w-100" for="reg_eme_<?php echo $idx; ?>">
+                                                <input class="form-check-input flex-shrink-0 m-0" type="checkbox" name="datos_emergencia[]" value="<?php echo htmlspecialchars($emergencia); ?>" id="reg_eme_<?php echo $idx; ?>">
+                                                <span class="texto-checkbox"><?php echo htmlspecialchars($emergencia); ?></span>
+                                            </label>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -195,7 +191,7 @@ $grupos_lista      = lista_grupos_sanguineos();
 
                             <!-- CONDICIONES MÉDICAS COMUNES -->
                             <div class="p-3 rounded-4 mb-3" style="background-color: #f8fbff; border: 1.5px solid #dbeafe;">
-                                <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-primary-subtle text-primary fw-bold fs-7 text-uppercase" style="letter-spacing: 0.05em;">
+                                <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-primary-subtle text-primary fw-bold text-uppercase" style="letter-spacing: 0.04em; font-size: 0.82rem;">
                                     <i class="bi bi-heart-pulse-fill fs-6"></i>
                                     <span>Condiciones Médicas Comunes</span>
                                 </div>
@@ -203,12 +199,10 @@ $grupos_lista      = lista_grupos_sanguineos();
                                 <div class="row g-2">
                                     <?php foreach ($condiciones_lista as $idx => $condicion): ?>
                                         <div class="col-md-6">
-                                            <div class="form-check p-2 rounded-2 h-100 d-flex align-items-start gap-2" style="background-color: #ffffff; border: 1px solid #e0f2fe;">
-                                                <input class="form-check-input mt-1" type="checkbox" name="condiciones_comunes[]" value="<?php echo htmlspecialchars($condicion); ?>" id="reg_cond_<?php echo $idx; ?>" style="accent-color: #4a80bc; cursor: pointer;">
-                                                <label class="form-check-label small fw-semibold text-secondary" for="reg_cond_<?php echo $idx; ?>" style="cursor: pointer; line-height: 1.3;">
-                                                    <?php echo htmlspecialchars($condicion); ?>
-                                                </label>
-                                            </div>
+                                            <label class="item-checkbox-antecedente comun-box w-100" for="reg_cond_<?php echo $idx; ?>">
+                                                <input class="form-check-input flex-shrink-0 m-0" type="checkbox" name="condiciones_comunes[]" value="<?php echo htmlspecialchars($condicion); ?>" id="reg_cond_<?php echo $idx; ?>">
+                                                <span class="texto-checkbox"><?php echo htmlspecialchars($condicion); ?></span>
+                                            </label>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -217,13 +211,15 @@ $grupos_lista      = lista_grupos_sanguineos();
                             <!-- OTROS ANTECEDENTES NO LISTADOS (DINÁMICO) -->
                             <div class="p-3 rounded-4" style="background-color: #ffffff; border: 1.5px solid #e2e8f0;">
                                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-light-subtle">
-                                    <div class="d-flex align-items-center gap-2 text-secondary fw-bold fs-7 text-uppercase" style="letter-spacing: 0.05em;">
+                                    <div class="d-flex align-items-center gap-2 text-secondary fw-bold text-uppercase" style="letter-spacing: 0.04em; font-size: 0.82rem;">
                                         <i class="bi bi-pencil-square fs-6 text-primary"></i>
                                         <span>Otros Antecedentes Médicos (No listados)</span>
                                     </div>
-                                    <small class="text-muted">Añada antecedentes personalizados</small>
+                                    <small class="text-muted" style="font-size: 0.78rem;">Opcional</small>
                                 </div>
-                                <p class="text-muted small mb-3">Si el paciente presenta alguna condición o antecedente médico que no aparezca en las opciones anteriores, ingréselo a continuación:</p>
+                                <p class="text-muted mb-3" style="font-size: 0.84rem; line-height: 1.4;">
+                                    Si el paciente presenta alguna condición o antecedente médico que no aparezca en las opciones anteriores, ingréselo a continuación:
+                                </p>
 
                                 <!-- Contenedor dinámico de campos de texto -->
                                 <div id="contenedor_otros_antecedentes">
@@ -233,8 +229,8 @@ $grupos_lista      = lista_grupos_sanguineos();
                                         </span>
                                         <input type="text" name="otros_antecedentes[]" class="form-control border-start-0" 
                                                placeholder="Especifique otro antecedente médico..."
-                                               style="border-color: #eaf4fe; background-color: #f9fcfe;">
-                                        <button type="button" class="btn btn-outline-danger btn-eliminar-otro px-3" title="Eliminar / Limpiar">
+                                               style="border-color: #eaf4fe; background-color: #f9fcfe; font-size: 0.86rem;">
+                                        <button type="button" class="btn btn-outline-danger btn-eliminar-otro px-3 d-inline-flex align-items-center justify-content-center" title="Eliminar / Limpiar">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </div>
@@ -242,7 +238,7 @@ $grupos_lista      = lista_grupos_sanguineos();
 
                                 <!-- Botón para agregar otro cuadro de texto -->
                                 <div class="mt-2">
-                                    <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2 py-1 px-3 rounded-pill fw-semibold" id="btn_agregar_otro_antecedente" style="font-size: 0.82rem;">
+                                    <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2 py-1 px-3 rounded-pill fw-semibold" id="btn_agregar_otro_antecedente" style="font-size: 0.83rem;">
                                         <i class="bi bi-plus-circle-fill"></i> Agregar otro antecedente
                                     </button>
                                 </div>

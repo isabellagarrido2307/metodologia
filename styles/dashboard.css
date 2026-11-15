@@ -592,8 +592,83 @@ input, button, select, textarea {
 /* ==========================================
    ESTILOS DE GESTIÓN DE ANTECEDENTES
    ================================---------- */
-.form-check:has(input[type="checkbox"]:checked) {
-    box-shadow: 0 0 0 1px currentColor;
+.item-checkbox-antecedente {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    transition: all 0.15s ease-in-out;
+    margin: 0;
+}
+
+.item-checkbox-antecedente:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.item-checkbox-antecedente.emergencia-box {
+    border-color: #fee2e2;
+}
+
+.item-checkbox-antecedente.emergencia-box:hover {
+    background-color: #fff5f5;
+    border-color: #fca5a5;
+}
+
+.item-checkbox-antecedente.comun-box {
+    border-color: #e0f2fe;
+}
+
+.item-checkbox-antecedente.comun-box:hover {
+    background-color: #f0f9ff;
+    border-color: #bae6fd;
+}
+
+.item-checkbox-antecedente input[type="checkbox"] {
+    width: 1.15rem;
+    height: 1.15rem;
+    cursor: pointer;
+    margin: 0 !important;
+    flex-shrink: 0;
+}
+
+.item-checkbox-antecedente.emergencia-box input[type="checkbox"] {
+    accent-color: #dc2626;
+}
+
+.item-checkbox-antecedente.comun-box input[type="checkbox"] {
+    accent-color: #2563eb;
+}
+
+.item-checkbox-antecedente .texto-checkbox {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1e293b;
+    line-height: 1.35;
+    margin: 0;
+}
+
+.item-checkbox-antecedente:has(input[type="checkbox"]:checked) {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+    box-shadow: 0 1px 3px rgba(59, 130, 246, 0.08);
+}
+
+.item-checkbox-antecedente.emergencia-box:has(input[type="checkbox"]:checked) {
+    background-color: #fff1f2;
+    border-color: #f43f5e;
+    box-shadow: 0 1px 3px rgba(244, 63, 94, 0.08);
+}
+
+.item-checkbox-antecedente:has(input[type="checkbox"]:checked) .texto-checkbox {
+    font-weight: 600;
+    color: #0f172a;
 }
 
 .btn-abrir-antecedentes {
@@ -601,8 +676,18 @@ input, button, select, textarea {
     white-space: nowrap;
 }
 
+.fila-otro-antecedente input,
+.fila-otro-modal input {
+    font-size: 0.86rem;
+}
+
 .fila-otro-antecedente input:focus,
 .fila-otro-modal input:focus {
     box-shadow: none;
     border-color: #9bc7f8 !important;
+}
+
+.fila-otro-antecedente .btn-eliminar-otro,
+.fila-otro-modal .btn-eliminar-otro-modal {
+    font-size: 0.85rem;
 }

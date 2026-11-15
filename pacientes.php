@@ -152,18 +152,21 @@ $resultado_pacientes = $mysqli->query($sql);
                                             </td>
 
                                             <td class="text-end">
-                                                <div class="d-inline-flex align-items-center justify-content-end gap-1 flex-wrap">
+                                                <div class="d-inline-flex align-items-center justify-content-end gap-2 flex-wrap">
                                                     <button type="button" 
-                                                            class="boton-secundario text-decoration-none border-0 d-inline-flex align-items-center gap-1 py-1 px-3 btn-abrir-antecedentes"
+                                                            class="boton-secundario text-decoration-none border-0 d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3 btn-abrir-antecedentes"
                                                             data-id="<?php echo $paciente['id_paciente']; ?>"
                                                             data-nombre="<?php echo htmlspecialchars(nombre_paciente($paciente), ENT_QUOTES, 'UTF-8'); ?>"
                                                             data-antecedentes="<?php echo htmlspecialchars($paciente['antecedentes'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                                                             data-redirect="pacientes.php"
-                                                            title="Gestionar antecedentes y datos de emergencia">
+                                                            title="Gestionar antecedentes y datos de emergencia"
+                                                            style="font-size: 0.8rem; font-weight: 600;">
                                                         <i class="bi bi-clipboard2-pulse"></i> Antecedentes
                                                     </button>
-                                                    <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" class="boton-secundario text-decoration-none d-inline-block">
-                                                        Ver Expediente
+                                                    <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" 
+                                                       class="boton-secundario text-decoration-none d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3"
+                                                       style="font-size: 0.8rem; font-weight: 600;">
+                                                        <i class="bi bi-folder2-open"></i> Ver Expediente
                                                     </a>
                                                 </div>
                                             </td>
