@@ -112,7 +112,7 @@ $grupos_lista      = lista_grupos_sanguineos();
                             </div>
                             <!-- Cédula Representante -->
                             <div class="col-md-3 mb-3">
-                                <label for="cedula_representante" class="form-label fw-semibold text-secondary small">Cédula del Representante</label>
+                                <label for="cedula_representante" class="form-label fw-semibold text-secondary small">Cédula</label>
                                 <input type="text" class="form-control" id="cedula_representante" name="cedula_representante" placeholder="Ej. 12345678" required style="border-color: #eaf4fe; background-color: #f9fcfe;">
                             </div>
                             <!-- Parentesco -->

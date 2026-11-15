@@ -152,7 +152,14 @@ $resultado_pacientes = $mysqli->query($sql);
                                             </td>
 
                                             <td class="text-end">
-                                                <div class="d-inline-flex align-items-center justify-content-end gap-2 flex-wrap">
+                                                <div class="d-inline-flex align-items-center justify-content-end gap-1 flex-wrap">
+                                                    <a href="descargar_expediente.php?id=<?php echo $paciente['id_paciente']; ?>" 
+                                                       target="_blank"
+                                                       class="boton-secundario text-decoration-none d-inline-flex align-items-center justify-content-center gap-1 py-1 px-2"
+                                                       title="Descargar expediente médico en PDF"
+                                                       style="font-size: 0.8rem; font-weight: 600; color: #dc2626 !important; background-color: #fff1f2; border-color: #fecaca;">
+                                                        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                                                    </a>
                                                     <button type="button" 
                                                             class="boton-secundario text-decoration-none border-0 d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3 btn-abrir-antecedentes"
                                                             data-id="<?php echo $paciente['id_paciente']; ?>"

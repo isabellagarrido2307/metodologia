@@ -80,6 +80,9 @@ foreach ($vacunas as $vacuna) {
                     </div>
                     <?php if ($paciente): ?>
                         <div class="acciones-cabecera">
+                            <a href="descargar_expediente.php?id=<?php echo $paciente['id_paciente']; ?>" target="_blank" class="boton-secundario py-2 px-3 border-0 d-inline-flex align-items-center gap-2 text-decoration-none" style="color: #dc2626; background-color: #fff1f2; border: 1px solid #fecaca; font-weight: 600;">
+                                <i class="bi bi-file-earmark-pdf-fill"></i> Descargar PDF
+                            </a>
                             <button type="button" class="boton-secundario py-2 px-3 border-0 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalConsultaExpediente">
                                 <i class="bi bi-clipboard2-plus"></i> Nueva consulta
                             </button>
