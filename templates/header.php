@@ -14,5 +14,5 @@
     <!-- Estilos personalizados -->
     <link rel="stylesheet" href="styles/Index.css">
     <link rel="stylesheet" href="styles/registro.css">
-    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/dashboard.css?v=<?php echo @filemtime(__DIR__ . '/../styles/dashboard.css') ?: '1'; ?>">
 </head>

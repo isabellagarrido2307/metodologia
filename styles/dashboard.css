@@ -544,3 +544,65 @@ input, button, select, textarea {
     background-color: #dc2626;
     color: #ffffff;
 }
+
+/* ==========================================
+   PESTAÑAS DEL EXPEDIENTE Y ACORDEONES
+   ================================---------- */
+.nav-tabs-expediente {
+    border-bottom: 1px solid #eaf4fe;
+    gap: 0.25rem;
+}
+
+.nav-tabs-expediente .nav-link {
+    border: none;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.6rem 0.9rem;
+}
+
+.nav-tabs-expediente .nav-link:hover {
+    background-color: #f9fcfe;
+    color: #4a80bc;
+}
+
+.nav-tabs-expediente .nav-link.active {
+    color: #4a80bc;
+    background-color: #eaf4fe;
+    border-bottom: 2px solid #4a80bc;
+}
+
+.accordion-button:not(.collapsed) {
+    color: #4a80bc;
+    background-color: transparent;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+@media (max-width: 575.98px) {
+    .nav-tabs-expediente .nav-link {
+        font-size: 0.78rem;
+        padding: 0.5rem 0.6rem;
+    }
+}
+
+/* ==========================================
+   ESTILOS DE GESTIÓN DE ANTECEDENTES
+   ================================---------- */
+.form-check:has(input[type="checkbox"]:checked) {
+    box-shadow: 0 0 0 1px currentColor;
+}
+
+.btn-abrir-antecedentes {
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.fila-otro-antecedente input:focus,
+.fila-otro-modal input:focus {
+    box-shadow: none;
+    border-color: #9bc7f8 !important;
+}

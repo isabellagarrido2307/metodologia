@@ -3,6 +3,9 @@ session_start();
 include __DIR__ . '/templates/header.php';
 $seccion_activa = 'pacientes';
 include('procedures/bddConexion.php');
+include('procedures/utilidades.php');
+
+asegurar_columna_antecedentes($mysqli);
 
 // 1. Obtener parámetros de ordenamiento / filtro de los combobox
 $orden_fecha = $_GET['orden_fecha'] ?? 'DESC'; 
@@ -10,7 +13,7 @@ $orden_nombre = $_GET['orden_nombre'] ?? '';
 $busqueda = $_GET['busqueda'] ?? '';
 
 // 2. Construir la consulta SQL dinámica
-$sql = "SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, created_at FROM pacientes WHERE activo = 1";
+$sql = "SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, antecedentes, created_at FROM pacientes WHERE activo = 1";
 
 if (!empty($busqueda)) {
     $busqueda_escape = $mysqli->real_escape_string($busqueda);
@@ -27,9 +30,6 @@ if (!empty($orden_nombre)) {
 
 $resultado_pacientes = $mysqli->query($sql);
 ?>
-
-<!-- Enlace a la hoja de estilos personalizada del dashboard -->
-<link rel="stylesheet" href="styles/dashboard.css?v=<?php echo filemtime('styles/dashboard.css'); ?>">
 
 <!-- Corrección puntual para que la tabla no se rompa por clases heredadas -->
 <style>
@@ -152,9 +152,20 @@ $resultado_pacientes = $mysqli->query($sql);
                                             </td>
 
                                             <td class="text-end">
-                                                <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" class="boton-secundario text-decoration-none d-inline-block">
-                                                    Ver Expediente
-                                                </a>
+                                                <div class="d-inline-flex align-items-center justify-content-end gap-1 flex-wrap">
+                                                    <button type="button" 
+                                                            class="boton-secundario text-decoration-none border-0 d-inline-flex align-items-center gap-1 py-1 px-3 btn-abrir-antecedentes"
+                                                            data-id="<?php echo $paciente['id_paciente']; ?>"
+                                                            data-nombre="<?php echo htmlspecialchars(nombre_paciente($paciente), ENT_QUOTES, 'UTF-8'); ?>"
+                                                            data-antecedentes="<?php echo htmlspecialchars($paciente['antecedentes'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                                                            data-redirect="pacientes.php"
+                                                            title="Gestionar antecedentes y datos de emergencia">
+                                                        <i class="bi bi-clipboard2-pulse"></i> Antecedentes
+                                                    </button>
+                                                    <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" class="boton-secundario text-decoration-none d-inline-block">
+                                                        Ver Expediente
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -177,6 +188,11 @@ $resultado_pacientes = $mysqli->query($sql);
         </div>
     </div>
 
+    <!-- Modal de Gestión de Antecedentes -->
+    <?php include __DIR__ . '/templates/modal_antecedentes.php'; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php mostrar_alerta_swal(); ?>
 </body>
 </html>
