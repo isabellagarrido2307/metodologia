@@ -206,29 +206,30 @@ if (!function_exists('mostrar_alerta_swal')) {
     }
 }
 
-if (!function_exists('asegurar_columna_antecedentes')) {
-    /**
-     * Comprueba y crea la columna `antecedentes` en la tabla `pacientes` si no existe.
-     */
-    function asegurar_columna_antecedentes(mysqli $mysqli): void
-    {
-        try {
-            $resultado = $mysqli->query("SHOW COLUMNS FROM pacientes LIKE 'antecedentes'");
-            if ($resultado && $resultado->num_rows === 0) {
-                $mysqli->query("ALTER TABLE pacientes ADD COLUMN antecedentes TEXT NULL AFTER direccion");
-            }
-        } catch (Throwable $e) {
-            // Ignorar para no interrumpir la ejecución si no hay permisos de alteración
-        }
-    }
-}
-
 if (!function_exists('lista_datos_emergencia')) {
     /**
      * Lista de condiciones críticas y datos de emergencia pediátrica.
      */
-    function lista_datos_emergencia(): array
+    function lista_datos_emergencia(?mysqli $mysqli = null): array
     {
+        if ($mysqli) {
+            try {
+                $res = $mysqli->query("SELECT nombre_antecedente FROM cat_antecedentes WHERE es_critico = 1 ORDER BY id ASC");
+                if ($res && $res->num_rows > 0) {
+                    $lista = [];
+                    while ($r = $res->fetch_assoc()) {
+                        $n = $r['nombre_antecedente'];
+                        if (!str_starts_with($n, 'Grupo Sanguíneo: ')) {
+                            $lista[] = $n;
+                        }
+                    }
+                    if (!empty($lista)) {
+                        return $lista;
+                    }
+                }
+            } catch (Throwable $e) {}
+        }
+
         return [
             'Alergia a Penicilinas / Amoxicilina / Betalactámicos',
             'Alergia a AINEs (Ibuprofeno, Aspirina, Dipirona)',
@@ -236,15 +237,10 @@ if (!function_exists('lista_datos_emergencia')) {
             'Alergia Alimentaria Severa (Maní, Frutos secos, Leche, Huevo)',
             'Alergia a Picaduras de Insectos / Abejas',
             'Alergia al Látex',
-            'Antecedente de Choque Anafiláctico',
             'Asma Bronquial / Hiperreactividad Bronquial',
-            'Epilepsia / Síndrome Convulsivo / Convulsiones febriles',
-            'Diabetes Mellitus Tipo 1 (Insulinodependiente)',
-            'Trastorno de Coagulación / Hemofilia / Von Willebrand',
+            'Diabetes Mellitus Tipo 1 (Insulindependiente)',
             'Cardiopatía Congénita / Arritmia cardíaca',
-            'Paciente Inmunosuprimido / Inmunodeficiencia',
             'Tratamiento Médico Crónico / Medicación Continua Vital',
-            'Portador de Implante Médico / Marcapasos / Válvula de derivación',
         ];
     }
 }
@@ -253,21 +249,35 @@ if (!function_exists('lista_condiciones_comunes')) {
     /**
      * Lista de condiciones comunes y antecedentes pediátricos frecuentes.
      */
-    function lista_condiciones_comunes(): array
+    function lista_condiciones_comunes(?mysqli $mysqli = null): array
     {
+        if ($mysqli) {
+            try {
+                $res = $mysqli->query("SELECT nombre_antecedente FROM cat_antecedentes WHERE es_critico = 0 ORDER BY id ASC");
+                if ($res && $res->num_rows > 0) {
+                    $lista = [];
+                    while ($r = $res->fetch_assoc()) {
+                        $lista[] = $r['nombre_antecedente'];
+                    }
+                    if (!empty($lista)) {
+                        return $lista;
+                    }
+                }
+            } catch (Throwable $e) {}
+        }
+
         return [
-            'Hipertensión Arterial',
-            'Enfermedad Renal / Infecciones Urinarias recurrentes',
             'Rinitis Alérgica / Sinusitis Crónica',
-            'Dermatitis Atópica / Eczema infantil',
             'Enfermedad Celíaca / Intolerancia a la Lactosa',
-            'Prematurez / Bajo Peso al Nacer / UCI Neonatal',
             'Reflujo Gastroesofágico (ERGE)',
-            'Hospitalizaciones Previas',
-            'Intervenciones Quirúrgicas / Cirugías Previas',
-            'Trastorno del Neurodesarrollo (TDAH / TEA)',
-            'Hipotiroidismo Congénito o Adquirido',
-            'Obesidad Infantil / Trastorno Nutricional',
+            'Prematurez (< 37 semanas)',
+            'Asfixia perinatal / Hipoxia',
+            'Ictericia neonatal requiriendo fototerapia',
+            'Cesárea de emergencia',
+            'Diabetes mellitus en familiares directos',
+            'Hipertensión arterial familiar',
+            'Atopia / Dermatitis atópica familiar',
+            'Antecedente familiar de asma',
         ];
     }
 }
@@ -282,11 +292,160 @@ if (!function_exists('lista_grupos_sanguineos')) {
     }
 }
 
+if (!function_exists('obtener_antecedentes_paciente')) {
+    /**
+     * Obtiene los antecedentes registrados de un paciente desde la tabla relacional paciente_antecedentes.
+     */
+    function obtener_antecedentes_paciente(mysqli $mysqli, int $paciente_id): array
+    {
+        $resultado = [
+            'emergencia' => [],
+            'condiciones' => [],
+            'grupo_sanguineo' => '',
+            'otros' => [],
+        ];
+
+        if ($paciente_id <= 0) {
+            return $resultado;
+        }
+
+        try {
+            $stmt = $mysqli->prepare("SELECT ca.nombre_antecedente, ca.es_critico, ca.categoria, pa.observacion_corta 
+                                      FROM paciente_antecedentes pa 
+                                      INNER JOIN cat_antecedentes ca ON ca.id = pa.antecedente_id 
+                                      WHERE pa.paciente_id = ?
+                                      ORDER BY ca.es_critico DESC, ca.nombre_antecedente ASC");
+            if (!$stmt) {
+                return $resultado;
+            }
+
+            $stmt->bind_param('i', $paciente_id);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            while ($fila = $res->fetch_assoc()) {
+                $nombre = $fila['nombre_antecedente'];
+                if (str_starts_with($nombre, 'Grupo Sanguíneo: ')) {
+                    $resultado['grupo_sanguineo'] = trim(str_replace('Grupo Sanguíneo: ', '', $nombre));
+                } elseif (!empty($fila['observacion_corta'])) {
+                    $resultado['otros'][] = $nombre . ' (' . $fila['observacion_corta'] . ')';
+                } elseif ((int)$fila['es_critico'] === 1) {
+                    $resultado['emergencia'][] = $nombre;
+                } else {
+                    $resultado['condiciones'][] = $nombre;
+                }
+            }
+            $stmt->close();
+        } catch (Throwable $e) {
+            // Error silencioso
+        }
+
+        return $resultado;
+    }
+}
+
+if (!function_exists('guardar_antecedentes_paciente')) {
+    /**
+     * Guarda los antecedentes de un paciente en las tablas relacionales cat_antecedentes y paciente_antecedentes.
+     */
+    function guardar_antecedentes_paciente(mysqli $mysqli, int $paciente_id, array $emergencia, array $condiciones, string $grupo_sanguineo, array $otros): void
+    {
+        if ($paciente_id <= 0) {
+            return;
+        }
+
+        // 1. Eliminar asignaciones previas del paciente
+        $stmt_del = $mysqli->prepare("DELETE FROM paciente_antecedentes WHERE paciente_id = ?");
+        if ($stmt_del) {
+            $stmt_del->bind_param('i', $paciente_id);
+            $stmt_del->execute();
+            $stmt_del->close();
+        }
+
+        // Función anónima para obtener o crear el antecedente en cat_antecedentes
+        $obtener_o_crear_cat = function(string $nombre, string $categoria, int $es_critico) use ($mysqli): int {
+            $nombre = trim($nombre);
+            if ($nombre === '') return 0;
+
+            $stmt = $mysqli->prepare("SELECT id FROM cat_antecedentes WHERE nombre_antecedente = ? LIMIT 1");
+            if (!$stmt) return 0;
+            $stmt->bind_param('s', $nombre);
+            $stmt->execute();
+            $res = $stmt->get_result();
+            if ($fila = $res->fetch_assoc()) {
+                $stmt->close();
+                return (int)$fila['id'];
+            }
+            $stmt->close();
+
+            $stmt_ins = $mysqli->prepare("INSERT INTO cat_antecedentes (categoria, nombre_antecedente, es_critico) VALUES (?, ?, ?)");
+            if (!$stmt_ins) return 0;
+            $stmt_ins->bind_param('ssi', $categoria, $nombre, $es_critico);
+            $stmt_ins->execute();
+            $nuevo_id = $stmt_ins->insert_id;
+            $stmt_ins->close();
+            return $nuevo_id;
+        };
+
+        $stmt_pa = $mysqli->prepare("INSERT INTO paciente_antecedentes (paciente_id, antecedente_id, observacion_corta) VALUES (?, ?, ?)");
+        if (!$stmt_pa) return;
+
+        // 2. Guardar Grupo Sanguíneo si fue especificado
+        $grupo_sanguineo = trim($grupo_sanguineo);
+        if ($grupo_sanguineo !== '') {
+            $cat_id = $obtener_o_crear_cat('Grupo Sanguíneo: ' . $grupo_sanguineo, 'Patológico', 1);
+            if ($cat_id > 0) {
+                $obs = null;
+                $stmt_pa->bind_param('iis', $paciente_id, $cat_id, $obs);
+                $stmt_pa->execute();
+            }
+        }
+
+        // 3. Guardar Alertas de Emergencia marcadas
+        foreach ($emergencia as $item) {
+            $item = trim((string)$item);
+            if ($item === '') continue;
+            $cat_id = $obtener_o_crear_cat($item, 'Alérgico', 1);
+            if ($cat_id > 0) {
+                $obs = null;
+                $stmt_pa->bind_param('iis', $paciente_id, $cat_id, $obs);
+                $stmt_pa->execute();
+            }
+        }
+
+        // 4. Guardar Condiciones Comunes marcadas
+        foreach ($condiciones as $item) {
+            $item = trim((string)$item);
+            if ($item === '') continue;
+            $cat_id = $obtener_o_crear_cat($item, 'Patológico', 0);
+            if ($cat_id > 0) {
+                $obs = null;
+                $stmt_pa->bind_param('iis', $paciente_id, $cat_id, $obs);
+                $stmt_pa->execute();
+            }
+        }
+
+        // 5. Guardar Otros Antecedentes personalizados
+        foreach ($otros as $item) {
+            $item = trim((string)$item);
+            if ($item === '') continue;
+            $cat_id = $obtener_o_crear_cat($item, 'Patológico', 0);
+            if ($cat_id > 0) {
+                $obs = null;
+                $stmt_pa->bind_param('iis', $paciente_id, $cat_id, $obs);
+                $stmt_pa->execute();
+            }
+        }
+
+        $stmt_pa->close();
+    }
+}
+
 if (!function_exists('parsear_antecedentes')) {
     /**
-     * Deserializa los antecedentes guardados (JSON o texto plano histórico).
+     * Deserializa los antecedentes guardados (JSON, array estructurado o texto plano).
      */
-    function parsear_antecedentes(?string $antecedentes_raw): array
+    function parsear_antecedentes($antecedentes_raw): array
     {
         $vacio = [
             'emergencia' => [],
@@ -298,6 +457,52 @@ if (!function_exists('parsear_antecedentes')) {
         if (empty($antecedentes_raw)) {
             return $vacio;
         }
+
+        if (is_array($antecedentes_raw)) {
+            return [
+                'emergencia' => array_values(array_filter($antecedentes_raw['emergencia'] ?? [])),
+                'condiciones' => array_values(array_filter($antecedentes_raw['condiciones'] ?? [])),
+                'grupo_sanguineo' => trim((string)($antecedentes_raw['grupo_sanguineo'] ?? '')),
+                'otros' => array_values(array_filter($antecedentes_raw['otros'] ?? [])),
+            ];
+        }
+
+        $trim = trim((string)$antecedentes_raw);
+        if ($trim === '') {
+            return $vacio;
+        }
+
+        if (str_starts_with($trim, '{') && str_ends_with($trim, '}')) {
+            $data = json_decode($trim, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
+                return [
+                    'emergencia' => isset($data['emergencia']) && is_array($data['emergencia'])
+                        ? array_values(array_filter($data['emergencia'], fn($v) => trim((string)$v) !== ''))
+                        : [],
+                    'condiciones' => isset($data['condiciones']) && is_array($data['condiciones'])
+                        ? array_values(array_filter($data['condiciones'], fn($v) => trim((string)$v) !== ''))
+                        : [],
+                    'grupo_sanguineo' => trim((string)($data['grupo_sanguineo'] ?? '')),
+                    'otros' => isset($data['otros']) && is_array($data['otros'])
+                        ? array_values(array_filter($data['otros'], fn($v) => trim((string)$v) !== ''))
+                        : [],
+                ];
+            }
+        }
+
+        $lineas = preg_split('/[\r\n]+/', $trim);
+        $otros = [];
+        foreach ($lineas as $linea) {
+            $limpia = trim($linea);
+            if ($limpia !== '') {
+                $otros[] = $limpia;
+            }
+        }
+
+        $vacio['otros'] = $otros;
+        return $vacio;
+    }
+}
 
         $trim = trim($antecedentes_raw);
         if ($trim === '') {
