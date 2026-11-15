@@ -45,18 +45,28 @@ if ($id_paciente <= 0 || $motivo === '') {
     exit();
 }
 
+if (empty($_SESSION['id_pediatra'])) {
+    $_SESSION['swal_message'] = [
+        'icon' => 'error',
+        'title' => 'Sesión requerida',
+        'text' => 'Inicie sesión para registrar consultas médicas.',
+    ];
+    header('Location: ../Index.php');
+    exit();
+}
+
 if (!tabla_existe($mysqli, 'consultas')) {
     $_SESSION['swal_message'] = [
         'icon' => 'error',
         'title' => 'Esquema incompleto',
-        'text' => 'Ejecute database/esquema_clinico.sql para habilitar los historiales clínicos.',
+        'text' => 'Ejecute database/mediportal.sql para habilitar los historiales clínicos.',
     ];
     header('Location: ' . $destino);
     exit();
 }
 
 // Verificar que el paciente exista y esté activo.
-$stmt_paciente = $mysqli->prepare('SELECT id_paciente FROM pacientes WHERE id_paciente = ? LIMIT 1');
+$stmt_paciente = $mysqli->prepare('SELECT id FROM pacientes WHERE id = ? AND activo = 1 LIMIT 1');
 $stmt_paciente->bind_param('i', $id_paciente);
 $stmt_paciente->execute();
 $paciente_existe = $stmt_paciente->get_result()->num_rows > 0;
@@ -74,12 +84,14 @@ if (!$paciente_existe) {
 
 $timestamp_consulta = strtotime($fecha_consulta);
 $fecha_consulta_sql = $timestamp_consulta ? date('Y-m-d H:i:s', $timestamp_consulta) : date('Y-m-d H:i:s');
-$peso = $peso === '' ? null : (float) str_replace(',', '.', $peso);
-$talla = $talla === '' ? null : (float) str_replace(',', '.', $talla);
+// peso y talla son NOT NULL en el esquema: se envían en 0 cuando no se indican.
+$peso = $peso === '' ? 0.0 : (float) str_replace(',', '.', $peso);
+$talla = $talla === '' ? 0.0 : (float) str_replace(',', '.', $talla);
 $circunferencia = $circunferencia === '' ? null : (float) str_replace(',', '.', $circunferencia);
-$id_pediatra = isset($_SESSION['id_pediatra']) ? (int) $_SESSION['id_pediatra'] : null;
+$id_pediatra = (int) $_SESSION['id_pediatra'];
 
-$sql = 'INSERT INTO consultas (id_paciente, id_pediatra, fecha_consulta, motivo_consulta, examen_fisico, diagnostico, tratamiento, peso, talla, circunferencia_cefalica)
+$sql = 'INSERT INTO consultas
+        (paciente_id, id_pediatra, fecha_hora, motivo_consulta, peso, talla, circunferencia_cefalica, examen_fisico, diagnostico, indicaciones_tratamiento)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 try {
@@ -90,17 +102,17 @@ try {
     }
 
     $stmt->bind_param(
-        'iisssssddd',
+        'iissdddsss',
         $id_paciente,
         $id_pediatra,
         $fecha_consulta_sql,
         $motivo,
-        $examen_fisico,
-        $diagnostico,
-        $tratamiento,
         $peso,
         $talla,
-        $circunferencia
+        $circunferencia,
+        $examen_fisico,
+        $diagnostico,
+        $tratamiento
     );
 
     if ($stmt->execute()) {

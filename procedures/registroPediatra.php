@@ -48,8 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Insertar el nuevo pediatra en la base de datos
-        // Nota: El campo password_hash almacena la clave según tu esquema de tabla actual
-        $sql_insertar = "INSERT INTO pediatras (nombres, apellidos, cedula, mpps, colegio_medico, especialidad, email, password_hash, telefono, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        // Nota: la columna `password` almacena la clave en texto plano (esquema actual).
+        $sql_insertar = "INSERT INTO pediatras (nombres, apellidos, cedula, mpps, colegio_medico, especialidad, email, password, telefono, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
 
         if ($stmt = $mysqli->prepare($sql_insertar)) {
             $stmt->bind_param("sssssssss", $nombres, $apellidos, $cedula, $mpps, $colegio_medico, $especialidad, $email, $password, $telefono);

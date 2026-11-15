@@ -5,10 +5,8 @@ $seccion_activa = 'pacientes';
 include('procedures/bddConexion.php');
 include('procedures/utilidades.php');
 
-asegurar_columna_antecedentes($mysqli);
-
-$emergencias_lista = lista_datos_emergencia();
-$condiciones_lista = lista_condiciones_comunes();
+$emergencias_lista = lista_datos_emergencia($mysqli);
+$condiciones_lista = lista_condiciones_comunes($mysqli);
 $grupos_lista      = lista_grupos_sanguineos();
 ?>
 
@@ -85,8 +83,8 @@ $grupos_lista      = lista_grupos_sanguineos();
                                 <label for="sexo" class="form-label fw-semibold text-secondary small">Sexo</label>
                                 <select class="form-select" id="sexo" name="sexo" required style="border-color: #eaf4fe; background-color: #f9fcfe;">
                                     <option value="">Seleccione...</option>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Femenino</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
                                 </select>
                             </div>
                             <!-- Lugar de nacimiento -->

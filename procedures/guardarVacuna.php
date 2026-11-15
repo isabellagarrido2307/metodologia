@@ -47,13 +47,13 @@ if (!tabla_existe($mysqli, 'vacunas')) {
     $_SESSION['swal_message'] = [
         'icon' => 'error',
         'title' => 'Esquema incompleto',
-        'text' => 'Ejecute database/esquema_clinico.sql para habilitar los registros de vacunación.',
+        'text' => 'Ejecute database/mediportal.sql para habilitar los registros de vacunación.',
     ];
     header('Location: ' . $destino);
     exit();
 }
 
-$stmt_paciente = $mysqli->prepare('SELECT id_paciente FROM pacientes WHERE id_paciente = ? LIMIT 1');
+$stmt_paciente = $mysqli->prepare('SELECT id FROM pacientes WHERE id = ? AND activo = 1 LIMIT 1');
 $stmt_paciente->bind_param('i', $id_paciente);
 $stmt_paciente->execute();
 $paciente_existe = $stmt_paciente->get_result()->num_rows > 0;
@@ -73,7 +73,7 @@ $fecha_aplicacion = date('Y-m-d', strtotime($fecha_aplicacion));
 $proxima_dosis = $proxima_dosis === '' ? null : date('Y-m-d', strtotime($proxima_dosis));
 $id_pediatra = isset($_SESSION['id_pediatra']) ? (int) $_SESSION['id_pediatra'] : null;
 
-$sql = 'INSERT INTO vacunas (id_paciente, id_pediatra, nombre_vacuna, dosis, fecha_aplicacion, proxima_dosis, lote, observaciones)
+$sql = 'INSERT INTO vacunas (paciente_id, id_pediatra, nombre_vacuna, dosis, fecha_aplicacion, proxima_dosis, lote, observaciones)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 
 try {

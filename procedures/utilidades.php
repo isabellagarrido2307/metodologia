@@ -106,10 +106,24 @@ if (!function_exists('formatear_fecha')) {
 if (!function_exists('etiqueta_sexo')) {
     function etiqueta_sexo(?string $sexo): string
     {
-        return match ($sexo) {
-            'M' => 'Masculino',
-            'F' => 'Femenino',
+        return match (strtoupper(trim((string) $sexo))) {
+            'M', 'MASCULINO' => 'Masculino',
+            'F', 'FEMENINO' => 'Femenino',
             default => 'No registrado',
+        };
+    }
+}
+
+if (!function_exists('normalizar_sexo')) {
+    /**
+     * Convierte los valores enviados por el formulario al ENUM de la tabla pacientes.
+     */
+    function normalizar_sexo(?string $sexo): ?string
+    {
+        return match (strtoupper(trim((string) $sexo))) {
+            'M', 'MASCULINO' => 'Masculino',
+            'F', 'FEMENINO' => 'Femenino',
+            default => null,
         };
     }
 }
@@ -206,12 +220,22 @@ if (!function_exists('mostrar_alerta_swal')) {
     }
 }
 
+/**
+ * Marca usada en paciente_antecedentes.observacion_corta para distinguir los
+ * antecedentes escritos manualmente por el usuario de los del catálogo.
+ */
+if (!defined('MEDIPORTAL_OTRO_ANTECEDENTE')) {
+    define('MEDIPORTAL_OTRO_ANTECEDENTE', 'Otro antecedente');
+}
+
 if (!function_exists('lista_datos_emergencia')) {
     /**
      * Lista de condiciones críticas y datos de emergencia pediátrica.
      */
     function lista_datos_emergencia(?mysqli $mysqli = null): array
     {
+        $mysqli = $mysqli ?? ($GLOBALS['mysqli'] ?? null);
+
         if ($mysqli) {
             try {
                 $res = $mysqli->query("SELECT nombre_antecedente FROM cat_antecedentes WHERE es_critico = 1 ORDER BY id ASC");
@@ -251,6 +275,8 @@ if (!function_exists('lista_condiciones_comunes')) {
      */
     function lista_condiciones_comunes(?mysqli $mysqli = null): array
     {
+        $mysqli = $mysqli ?? ($GLOBALS['mysqli'] ?? null);
+
         if ($mysqli) {
             try {
                 $res = $mysqli->query("SELECT nombre_antecedente FROM cat_antecedentes WHERE es_critico = 0 ORDER BY id ASC");
@@ -325,10 +351,14 @@ if (!function_exists('obtener_antecedentes_paciente')) {
 
             while ($fila = $res->fetch_assoc()) {
                 $nombre = $fila['nombre_antecedente'];
+                $observacion = trim((string) ($fila['observacion_corta'] ?? ''));
+
                 if (str_starts_with($nombre, 'Grupo Sanguíneo: ')) {
                     $resultado['grupo_sanguineo'] = trim(str_replace('Grupo Sanguíneo: ', '', $nombre));
-                } elseif (!empty($fila['observacion_corta'])) {
-                    $resultado['otros'][] = $nombre . ' (' . $fila['observacion_corta'] . ')';
+                } elseif ($observacion === MEDIPORTAL_OTRO_ANTECEDENTE) {
+                    $resultado['otros'][] = $nombre;
+                } elseif ($observacion !== '') {
+                    $resultado['otros'][] = $nombre . ' (' . $observacion . ')';
                 } elseif ((int)$fila['es_critico'] === 1) {
                     $resultado['emergencia'][] = $nombre;
                 } else {
@@ -431,13 +461,31 @@ if (!function_exists('guardar_antecedentes_paciente')) {
             if ($item === '') continue;
             $cat_id = $obtener_o_crear_cat($item, 'Patológico', 0);
             if ($cat_id > 0) {
-                $obs = null;
+                $obs = MEDIPORTAL_OTRO_ANTECEDENTE;
                 $stmt_pa->bind_param('iis', $paciente_id, $cat_id, $obs);
                 $stmt_pa->execute();
             }
         }
 
         $stmt_pa->close();
+    }
+}
+
+if (!function_exists('json_antecedentes_paciente')) {
+    /**
+     * Devuelve los antecedentes relacionales del paciente empaquetados como JSON,
+     * listos para el modal de edición y para renderizar_antecedentes_html().
+     */
+    function json_antecedentes_paciente(mysqli $mysqli, int $paciente_id): string
+    {
+        $datos = obtener_antecedentes_paciente($mysqli, $paciente_id);
+
+        return empaquetar_antecedentes(
+            $datos['emergencia'],
+            $datos['condiciones'],
+            $datos['grupo_sanguineo'],
+            $datos['otros']
+        );
     }
 }
 
@@ -490,45 +538,6 @@ if (!function_exists('parsear_antecedentes')) {
             }
         }
 
-        $lineas = preg_split('/[\r\n]+/', $trim);
-        $otros = [];
-        foreach ($lineas as $linea) {
-            $limpia = trim($linea);
-            if ($limpia !== '') {
-                $otros[] = $limpia;
-            }
-        }
-
-        $vacio['otros'] = $otros;
-        return $vacio;
-    }
-}
-
-        $trim = trim($antecedentes_raw);
-        if ($trim === '') {
-            return $vacio;
-        }
-
-        // Si viene en formato JSON estructurado
-        if (str_starts_with($trim, '{') && str_ends_with($trim, '}')) {
-            $data = json_decode($trim, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
-                return [
-                    'emergencia' => isset($data['emergencia']) && is_array($data['emergencia'])
-                        ? array_values(array_filter($data['emergencia'], fn($v) => trim((string)$v) !== ''))
-                        : [],
-                    'condiciones' => isset($data['condiciones']) && is_array($data['condiciones'])
-                        ? array_values(array_filter($data['condiciones'], fn($v) => trim((string)$v) !== ''))
-                        : [],
-                    'grupo_sanguineo' => trim((string)($data['grupo_sanguineo'] ?? '')),
-                    'otros' => isset($data['otros']) && is_array($data['otros'])
-                        ? array_values(array_filter($data['otros'], fn($v) => trim((string)$v) !== ''))
-                        : [],
-                ];
-            }
-        }
-
-        // Si es texto plano previo, se distribuye en 'otros'
         $lineas = preg_split('/[\r\n]+/', $trim);
         $otros = [];
         foreach ($lineas as $linea) {

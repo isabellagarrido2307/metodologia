@@ -105,7 +105,7 @@ if ($accion === 'password') {
     $password_nueva = (string) ($_POST['password_nueva'] ?? '');
     $password_confirmar = (string) ($_POST['password_confirmar'] ?? '');
 
-    if ($password_actual !== $pediatra['password_hash']) {
+    if ($password_actual !== $pediatra['password']) {
         $_SESSION['swal_message'] = [
             'icon' => 'error',
             'title' => 'Contraseña incorrecta',
@@ -136,7 +136,7 @@ if ($accion === 'password') {
     }
 
     try {
-        $stmt = $mysqli->prepare('UPDATE pediatras SET password_hash = ? WHERE id_pediatra = ?');
+        $stmt = $mysqli->prepare('UPDATE pediatras SET password = ? WHERE id_pediatra = ?');
         $stmt->bind_param('si', $password_nueva, $id_pediatra);
 
         if ($stmt->execute()) {

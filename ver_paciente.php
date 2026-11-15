@@ -15,7 +15,16 @@ $tiene_consultas = tabla_existe($mysqli, 'consultas');
 $tiene_vacunas = tabla_existe($mysqli, 'vacunas');
 
 if ($id_paciente) {
-    $stmt = $mysqli->prepare('SELECT * FROM pacientes WHERE id_paciente = ? LIMIT 1');
+    $stmt = $mysqli->prepare('SELECT p.*,
+                                     r.nombre AS nombre_representante,
+                                     r.apellido AS apellido_representante,
+                                     r.cedula AS cedula_representante,
+                                     r.parentesco AS parentesco,
+                                     r.telefono AS telefono_contacto,
+                                     r.direccion AS direccion
+                              FROM pacientes p
+                              LEFT JOIN representantes r ON r.id = p.representante_id
+                              WHERE p.id = ? LIMIT 1');
     $stmt->bind_param('i', $id_paciente);
     $stmt->execute();
     $paciente = $stmt->get_result()->fetch_assoc();
@@ -23,11 +32,14 @@ if ($id_paciente) {
 }
 
 if ($paciente && $tiene_consultas) {
-    $stmt = $mysqli->prepare("SELECT c.*, ped.nombres AS ped_nombres, ped.apellidos AS ped_apellidos
+    $stmt = $mysqli->prepare("SELECT c.*,
+                                     c.fecha_hora AS fecha_consulta,
+                                     c.indicaciones_tratamiento AS tratamiento,
+                                     ped.nombres AS ped_nombres, ped.apellidos AS ped_apellidos
                               FROM consultas c
                               LEFT JOIN pediatras ped ON ped.id_pediatra = c.id_pediatra
-                              WHERE c.id_paciente = ?
-                              ORDER BY c.fecha_consulta DESC");
+                              WHERE c.paciente_id = ?
+                              ORDER BY c.fecha_hora DESC");
     $stmt->bind_param('i', $id_paciente);
     $stmt->execute();
     $resultado = $stmt->get_result();
@@ -39,7 +51,7 @@ if ($paciente && $tiene_consultas) {
 }
 
 if ($paciente && $tiene_vacunas) {
-    $stmt = $mysqli->prepare('SELECT * FROM vacunas WHERE id_paciente = ? ORDER BY fecha_aplicacion DESC, id_vacuna DESC');
+    $stmt = $mysqli->prepare('SELECT * FROM vacunas WHERE paciente_id = ? ORDER BY fecha_aplicacion DESC, id_vacuna DESC');
     $stmt->bind_param('i', $id_paciente);
     $stmt->execute();
     $resultado = $stmt->get_result();
@@ -49,6 +61,8 @@ if ($paciente && $tiene_vacunas) {
     }
     $stmt->close();
 }
+
+$antecedentes_json = $paciente ? json_antecedentes_paciente($mysqli, (int) $paciente['id']) : '';
 
 $proxima_dosis = null;
 foreach ($vacunas as $vacuna) {
@@ -80,7 +94,7 @@ foreach ($vacunas as $vacuna) {
                     </div>
                     <?php if ($paciente): ?>
                         <div class="acciones-cabecera">
-                            <a href="descargar_expediente.php?id=<?php echo $paciente['id_paciente']; ?>" target="_blank" class="boton-secundario py-2 px-3 border-0 d-inline-flex align-items-center gap-2 text-decoration-none" style="color: #dc2626; background-color: #fff1f2; border: 1px solid #fecaca; font-weight: 600;">
+                            <a href="descargar_expediente.php?id=<?php echo $paciente['id']; ?>" target="_blank" class="boton-secundario py-2 px-3 border-0 d-inline-flex align-items-center gap-2 text-decoration-none" style="color: #dc2626; background-color: #fff1f2; border: 1px solid #fecaca; font-weight: 600;">
                                 <i class="bi bi-file-earmark-pdf-fill"></i> Descargar PDF
                             </a>
                             <button type="button" class="boton-secundario py-2 px-3 border-0 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalConsultaExpediente">
@@ -248,16 +262,16 @@ foreach ($vacunas as $vacuna) {
                                                         <small class="text-muted d-block fw-semibold">Antecedentes Médicos</small>
                                                         <button type="button" 
                                                                 class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 border-0 py-0 px-2 fw-semibold btn-abrir-antecedentes"
-                                                                data-id="<?php echo $paciente['id_paciente']; ?>"
+                                                                data-id="<?php echo $paciente['id']; ?>"
                                                                 data-nombre="<?php echo htmlspecialchars(nombre_paciente($paciente), ENT_QUOTES, 'UTF-8'); ?>"
-                                                                data-antecedentes="<?php echo htmlspecialchars($paciente['antecedentes'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
-                                                                data-redirect="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>"
+                                                                data-antecedentes="<?php echo htmlspecialchars($antecedentes_json, ENT_QUOTES, 'UTF-8'); ?>"
+                                                                data-redirect="ver_paciente.php?id=<?php echo $paciente['id']; ?>"
                                                                 title="Editar antecedentes médicos">
                                                             <i class="bi bi-pencil-square"></i> Editar antecedentes
                                                         </button>
                                                     </div>
                                                     <div>
-                                                        <?php echo renderizar_antecedentes_html($paciente['antecedentes'] ?? ''); ?>
+                                                        <?php echo renderizar_antecedentes_html($antecedentes_json); ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -377,7 +391,7 @@ foreach ($vacunas as $vacuna) {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <input type="hidden" name="id_paciente" value="<?php echo (int) $paciente['id_paciente']; ?>">
+                                        <input type="hidden" name="id_paciente" value="<?php echo (int) $paciente['id']; ?>">
                                         <input type="hidden" name="origen" value="expediente">
 
                                         <div class="row g-3">
@@ -439,7 +453,7 @@ foreach ($vacunas as $vacuna) {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <input type="hidden" name="id_paciente" value="<?php echo (int) $paciente['id_paciente']; ?>">
+                                        <input type="hidden" name="id_paciente" value="<?php echo (int) $paciente['id']; ?>">
                                         <input type="hidden" name="origen" value="expediente">
 
                                         <div class="row g-3">

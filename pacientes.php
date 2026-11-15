@@ -5,19 +5,20 @@ $seccion_activa = 'pacientes';
 include('procedures/bddConexion.php');
 include('procedures/utilidades.php');
 
-asegurar_columna_antecedentes($mysqli);
-
 // 1. Obtener parámetros de ordenamiento / filtro de los combobox
 $orden_fecha = $_GET['orden_fecha'] ?? 'DESC'; 
 $orden_nombre = $_GET['orden_nombre'] ?? '';   
 $busqueda = $_GET['busqueda'] ?? '';
 
 // 2. Construir la consulta SQL dinámica
-$sql = "SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, antecedentes, created_at FROM pacientes WHERE activo = 1";
+$sql = "SELECT id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, created_at FROM pacientes WHERE activo = 1";
 
 if (!empty($busqueda)) {
     $busqueda_escape = $mysqli->real_escape_string($busqueda);
-    $sql .= " AND (primer_nombre LIKE '%$busqueda_escape%' OR primer_apellido LIKE '%$busqueda_escape%')";
+    $sql .= " AND (primer_nombre LIKE '%$busqueda_escape%'
+                   OR segundo_nombre LIKE '%$busqueda_escape%'
+                   OR primer_apellido LIKE '%$busqueda_escape%'
+                   OR segundo_apellido LIKE '%$busqueda_escape%')";
 }
 
 if (!empty($orden_nombre)) {
@@ -125,6 +126,7 @@ $resultado_pacientes = $mysqli->query($sql);
                             <tbody>
                                 <?php if ($resultado_pacientes && $resultado_pacientes->num_rows > 0): ?>
                                     <?php while($paciente = $resultado_pacientes->fetch_assoc()): ?>
+                                        <?php $antecedentes_json = json_antecedentes_paciente($mysqli, (int) $paciente['id']); ?>
                                         <tr class="elemento-item" style="border-bottom: 1px solid #f9fcfe;">
                                             <td>
                                                 <div class="d-flex align-items-center">
@@ -153,7 +155,7 @@ $resultado_pacientes = $mysqli->query($sql);
 
                                             <td>
                                                 <div class="d-inline-flex align-items-center justify-content-end gap-1 flex-wrap">
-                                                    <a href="descargar_expediente.php?id=<?php echo $paciente['id_paciente']; ?>" 
+                                                    <a href="descargar_expediente.php?id=<?php echo (int) $paciente['id']; ?>" 
                                                        target="_blank"
                                                        class="boton-secundario text-decoration-none d-inline-flex align-items-center justify-content-center gap-1 py-1 px-2"
                                                        title="Descargar expediente médico en PDF"
@@ -162,15 +164,15 @@ $resultado_pacientes = $mysqli->query($sql);
                                                     </a>
                                                     <button type="button" 
                                                             class="boton-secundario text-decoration-none border-0 d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3 btn-abrir-antecedentes"
-                                                            data-id="<?php echo $paciente['id_paciente']; ?>"
+                                                            data-id="<?php echo (int) $paciente['id']; ?>"
                                                             data-nombre="<?php echo htmlspecialchars(nombre_paciente($paciente), ENT_QUOTES, 'UTF-8'); ?>"
-                                                            data-antecedentes="<?php echo htmlspecialchars($paciente['antecedentes'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                                                            data-antecedentes="<?php echo htmlspecialchars($antecedentes_json, ENT_QUOTES, 'UTF-8'); ?>"
                                                             data-redirect="pacientes.php"
                                                             title="Gestionar antecedentes y datos de emergencia"
                                                             style="font-size: 0.8rem; font-weight: 600;">
                                                         <i class="bi bi-clipboard2-pulse"></i> 
                                                     </button>
-                                                    <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" 
+                                                    <a href="ver_paciente.php?id=<?php echo (int) $paciente['id']; ?>" 
                                                        class="boton-secundario text-decoration-none d-inline-flex align-items-center justify-content-center gap-1 py-1 px-3"
                                                        style="font-size: 0.8rem; font-weight: 600;">
                                                         <i class="bi bi-folder2-open"></i>

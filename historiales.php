@@ -17,10 +17,13 @@ $consultas_mes = 0;
 
 if ($tiene_consultas) {
     $sql = "SELECT c.*,
+                   c.paciente_id AS id_paciente,
+                   c.fecha_hora AS fecha_consulta,
+                   c.indicaciones_tratamiento AS tratamiento,
                    p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido,
                    ped.nombres AS ped_nombres, ped.apellidos AS ped_apellidos
             FROM consultas c
-            INNER JOIN pacientes p ON p.id_paciente = c.id_paciente
+            INNER JOIN pacientes p ON p.id = c.paciente_id
             LEFT JOIN pediatras ped ON ped.id_pediatra = c.id_pediatra";
 
     $tipos = '';
@@ -35,7 +38,7 @@ if ($tiene_consultas) {
         $parametros = array_fill(0, 6, $like);
     }
 
-    $sql .= " ORDER BY c.fecha_consulta DESC LIMIT 200";
+    $sql .= " ORDER BY c.fecha_hora DESC LIMIT 200";
     $stmt = $mysqli->prepare($sql);
 
     if ($stmt) {
@@ -52,15 +55,15 @@ if ($tiene_consultas) {
     }
 
     $totales = $mysqli->query("SELECT COUNT(*) AS total,
-                                      COUNT(DISTINCT id_paciente) AS pacientes,
-                                      SUM(DATE_FORMAT(fecha_consulta, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')) AS del_mes
+                                      COUNT(DISTINCT paciente_id) AS pacientes,
+                                      SUM(DATE_FORMAT(fecha_hora, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')) AS del_mes
                                FROM consultas")->fetch_assoc();
     $total_consultas = (int) ($totales['total'] ?? 0);
     $pacientes_atendidos = (int) ($totales['pacientes'] ?? 0);
     $consultas_mes = (int) ($totales['del_mes'] ?? 0);
 }
 
-$pacientes_selector = $mysqli->query("SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido
+$pacientes_selector = $mysqli->query("SELECT id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido
                                       FROM pacientes WHERE activo = 1
                                       ORDER BY primer_nombre ASC, primer_apellido ASC");
 ?>
@@ -236,7 +239,7 @@ $pacientes_selector = $mysqli->query("SELECT id_paciente, primer_nombre, segundo
                                     <?php if ($pacientes_selector): ?>
                                         <?php $pacientes_selector->data_seek(0); ?>
                                         <?php while ($paciente_opcion = $pacientes_selector->fetch_assoc()): ?>
-                                            <option value="<?php echo (int) $paciente_opcion['id_paciente']; ?>"><?php echo htmlspecialchars(nombre_paciente($paciente_opcion)); ?></option>
+                                            <option value="<?php echo (int) $paciente_opcion['id']; ?>"><?php echo htmlspecialchars(nombre_paciente($paciente_opcion)); ?></option>
                                         <?php endwhile; ?>
                                     <?php endif; ?>
                                 </select>

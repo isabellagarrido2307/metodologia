@@ -10,8 +10,17 @@ if (!$id_paciente) {
     die('ID de paciente no válido.');
 }
 
-// 1. Obtener datos del paciente
-$stmt = $mysqli->prepare('SELECT * FROM pacientes WHERE id_paciente = ? LIMIT 1');
+// 1. Obtener datos del paciente y de su representante
+$stmt = $mysqli->prepare('SELECT p.*,
+                                 r.nombre AS nombre_representante,
+                                 r.apellido AS apellido_representante,
+                                 r.cedula AS cedula_representante,
+                                 r.parentesco AS parentesco,
+                                 r.telefono AS telefono_contacto,
+                                 r.direccion AS direccion
+                          FROM pacientes p
+                          LEFT JOIN representantes r ON r.id = p.representante_id
+                          WHERE p.id = ? LIMIT 1');
 $stmt->bind_param('i', $id_paciente);
 $stmt->execute();
 $paciente = $stmt->get_result()->fetch_assoc();
@@ -24,11 +33,14 @@ if (!$paciente) {
 // 2. Obtener consultas médicas
 $consultas = [];
 if (tabla_existe($mysqli, 'consultas')) {
-    $stmt = $mysqli->prepare("SELECT c.*, ped.nombres AS ped_nombres, ped.apellidos AS ped_apellidos
+    $stmt = $mysqli->prepare("SELECT c.*,
+                                     c.fecha_hora AS fecha_consulta,
+                                     c.indicaciones_tratamiento AS tratamiento,
+                                     ped.nombres AS ped_nombres, ped.apellidos AS ped_apellidos
                               FROM consultas c
                               LEFT JOIN pediatras ped ON ped.id_pediatra = c.id_pediatra
-                              WHERE c.id_paciente = ?
-                              ORDER BY c.fecha_consulta DESC");
+                              WHERE c.paciente_id = ?
+                              ORDER BY c.fecha_hora DESC");
     $stmt->bind_param('i', $id_paciente);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -41,7 +53,7 @@ if (tabla_existe($mysqli, 'consultas')) {
 // 3. Obtener vacunas
 $vacunas = [];
 if (tabla_existe($mysqli, 'vacunas')) {
-    $stmt = $mysqli->prepare('SELECT * FROM vacunas WHERE id_paciente = ? ORDER BY fecha_aplicacion DESC, id_vacuna DESC');
+    $stmt = $mysqli->prepare('SELECT * FROM vacunas WHERE paciente_id = ? ORDER BY fecha_aplicacion DESC, id_vacuna DESC');
     $stmt->bind_param('i', $id_paciente);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -51,7 +63,7 @@ if (tabla_existe($mysqli, 'vacunas')) {
     $stmt->close();
 }
 
-$antecedentes_datos = parsear_antecedentes($paciente['antecedentes'] ?? '');
+$antecedentes_datos = obtener_antecedentes_paciente($mysqli, (int) $id_paciente);
 $nombre_completo = nombre_paciente($paciente);
 $nombre_archivo = 'Expediente_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $nombre_completo);
 ?>
@@ -328,7 +340,7 @@ $nombre_archivo = 'Expediente_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $nombre_
                 <div class="col-4 text-end">
                     <div class="p-2 rounded bg-light border text-center d-inline-block">
                         <span class="d-block fw-bold text-dark" style="font-size: 0.85rem;">EXPEDIENTE MÉDICO</span>
-                        <span class="d-block text-primary fw-bold" style="font-size: 0.95rem;">#EXP-<?php echo str_pad($paciente['id_paciente'], 5, '0', STR_PAD_LEFT); ?></span>
+                        <span class="d-block text-primary fw-bold" style="font-size: 0.95rem;">#EXP-<?php echo str_pad((string) $paciente['id'], 5, '0', STR_PAD_LEFT); ?></span>
                         <small class="text-muted d-block" style="font-size: 0.7rem;">Fecha: <?php echo date('d/m/Y H:i'); ?></small>
                     </div>
                 </div>

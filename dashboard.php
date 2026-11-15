@@ -12,7 +12,7 @@ $resultado_total = $mysqli->query("SELECT COUNT(*) AS total FROM pacientes WHERE
 $total_pacientes = (int) ($resultado_total->fetch_assoc()['total'] ?? 0);
 
 // Pacientes más recientes
-$resultado_recientes = $mysqli->query("SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, created_at
+$resultado_recientes = $mysqli->query("SELECT id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, created_at
                                        FROM pacientes ORDER BY created_at DESC LIMIT 5");
 
 // Estadísticas clínicas
@@ -36,7 +36,7 @@ if ($tiene_vacunas) {
 
     $resultado_alertas = $mysqli->query("SELECT v.*, p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido
                                          FROM vacunas v
-                                         INNER JOIN pacientes p ON p.id_paciente = v.id_paciente
+                                         INNER JOIN pacientes p ON p.id = v.paciente_id
                                          WHERE v.proxima_dosis IS NOT NULL
                                            AND v.proxima_dosis <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
                                          ORDER BY v.proxima_dosis ASC
@@ -152,7 +152,7 @@ if ($tiene_vacunas) {
                                                     <small class="subtitulo-item">Registrado el: <?php echo date('d/m/Y', strtotime($paciente['created_at'])); ?></small>
                                                 </div>
                                             </div>
-                                            <a href="ver_paciente.php?id=<?php echo $paciente['id_paciente']; ?>" class="boton-secundario text-decoration-none">Ver más</a>
+                                            <a href="ver_paciente.php?id=<?php echo (int) $paciente['id']; ?>" class="boton-secundario text-decoration-none">Ver más</a>
                                         </div>
                                     <?php endwhile; ?>
                                 <?php else: ?>
@@ -249,7 +249,7 @@ if ($tiene_vacunas) {
                                                     </small>
                                                 </div>
                                             </div>
-                                            <a href="ver_paciente.php?id=<?php echo (int) $alerta['id_paciente']; ?>#vacunas" class="boton-revision text-decoration-none <?php echo $es_critica ? 'boton-revision-critica' : ''; ?>">
+                                            <a href="ver_paciente.php?id=<?php echo (int) $alerta['paciente_id']; ?>#vacunas" class="boton-revision text-decoration-none <?php echo $es_critica ? 'boton-revision-critica' : ''; ?>">
                                                 Revisar
                                             </a>
                                         </div>

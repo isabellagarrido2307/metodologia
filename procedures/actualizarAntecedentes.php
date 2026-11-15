@@ -28,8 +28,22 @@ if (!$id_paciente) {
     exit();
 }
 
-// Asegurar que la columna antecedentes exista en la tabla
-asegurar_columna_antecedentes($mysqli);
+// Verificar que el paciente exista antes de modificar sus antecedentes.
+$stmt_paciente = $mysqli->prepare('SELECT id FROM pacientes WHERE id = ? LIMIT 1');
+$stmt_paciente->bind_param('i', $id_paciente);
+$stmt_paciente->execute();
+$paciente_existe = $stmt_paciente->get_result()->num_rows > 0;
+$stmt_paciente->close();
+
+if (!$paciente_existe) {
+    $_SESSION['swal_message'] = [
+        'icon' => 'error',
+        'title' => 'Paciente no encontrado',
+        'text' => 'El expediente indicado no existe en el sistema.',
+    ];
+    header('Location: ' . $redirect_to);
+    exit();
+}
 
 // Recopilar datos recibidos
 $datos_emergencia = isset($_POST['datos_emergencia']) && is_array($_POST['datos_emergencia'])
@@ -46,35 +60,18 @@ $otros_antecedentes = isset($_POST['otros_antecedentes']) && is_array($_POST['ot
     ? $_POST['otros_antecedentes']
     : [];
 
-$antecedentes_json = empaquetar_antecedentes(
-    $datos_emergencia,
-    $condiciones_comunes,
-    $grupo_sanguineo,
-    $otros_antecedentes
-);
-
 try {
-    $stmt = $mysqli->prepare("UPDATE pacientes SET antecedentes = ? WHERE id_paciente = ? LIMIT 1");
-    if (!$stmt) {
-        throw new RuntimeException('No se pudo preparar la actualización de antecedentes.');
-    }
+    $mysqli->begin_transaction();
+    guardar_antecedentes_paciente($mysqli, (int) $id_paciente, $datos_emergencia, $condiciones_comunes, $grupo_sanguineo, $otros_antecedentes);
+    $mysqli->commit();
 
-    $stmt->bind_param('si', $antecedentes_json, $id_paciente);
-    if ($stmt->execute()) {
-        $_SESSION['swal_message'] = [
-            'icon' => 'success',
-            'title' => '¡Antecedentes actualizados!',
-            'text' => 'Los antecedentes médicos y datos de emergencia fueron guardados correctamente.',
-        ];
-    } else {
-        $_SESSION['swal_message'] = [
-            'icon' => 'error',
-            'title' => 'Error al guardar',
-            'text' => 'No se pudieron actualizar los antecedentes: ' . $stmt->error,
-        ];
-    }
-    $stmt->close();
+    $_SESSION['swal_message'] = [
+        'icon' => 'success',
+        'title' => '¡Antecedentes actualizados!',
+        'text' => 'Los antecedentes médicos y datos de emergencia fueron guardados correctamente.',
+    ];
 } catch (Throwable $e) {
+    $mysqli->rollback();
     $_SESSION['swal_message'] = [
         'icon' => 'error',
         'title' => 'Error inesperado',
@@ -82,5 +79,6 @@ try {
     ];
 }
 
+$mysqli->close();
 header('Location: ' . $redirect_to);
 exit();

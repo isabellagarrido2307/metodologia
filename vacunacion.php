@@ -17,9 +17,10 @@ $proximas_dosis = 0;
 $dosis_vencidas = 0;
 
 if ($tiene_vacunas) {
-    $sql = "SELECT v.*, p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido
+    $sql = "SELECT v.*, v.paciente_id AS id_paciente,
+                   p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido
             FROM vacunas v
-            INNER JOIN pacientes p ON p.id_paciente = v.id_paciente";
+            INNER JOIN pacientes p ON p.id = v.paciente_id";
 
     $tipos = '';
     $parametros = [];
@@ -50,7 +51,7 @@ if ($tiene_vacunas) {
     }
 
     $totales = $mysqli->query("SELECT COUNT(*) AS total,
-                                      COUNT(DISTINCT id_paciente) AS pacientes,
+                                      COUNT(DISTINCT paciente_id) AS pacientes,
                                       SUM(proxima_dosis BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)) AS proximas,
                                       SUM(proxima_dosis < CURDATE()) AS vencidas
                                FROM vacunas")->fetch_assoc();
@@ -60,7 +61,7 @@ if ($tiene_vacunas) {
     $dosis_vencidas = (int) ($totales['vencidas'] ?? 0);
 }
 
-$pacientes_selector = $mysqli->query("SELECT id_paciente, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido
+$pacientes_selector = $mysqli->query("SELECT id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido
                                       FROM pacientes WHERE activo = 1
                                       ORDER BY primer_nombre ASC, primer_apellido ASC");
 
@@ -282,7 +283,7 @@ $esquema_vacunacion = [
                                     <?php if ($pacientes_selector): ?>
                                         <?php $pacientes_selector->data_seek(0); ?>
                                         <?php while ($paciente_opcion = $pacientes_selector->fetch_assoc()): ?>
-                                            <option value="<?php echo (int) $paciente_opcion['id_paciente']; ?>"><?php echo htmlspecialchars(nombre_paciente($paciente_opcion)); ?></option>
+                                            <option value="<?php echo (int) $paciente_opcion['id']; ?>"><?php echo htmlspecialchars(nombre_paciente($paciente_opcion)); ?></option>
                                         <?php endwhile; ?>
                                     <?php endif; ?>
                                 </select>
