@@ -9,7 +9,34 @@
 body {
     font-family: 'Montserrat', sans-serif !important;
 }
+body.login-page-unique {
+    background-image: url('../img/login-bg-pediatrico.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f8fb;
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
 
+/* Sombra suave y moderna para la tarjeta unificada */
+.shadow-custom {
+    box-shadow: 0 15px 35px rgba(155, 199, 248, 0.25) !important;
+}
+/* El contenedor del formulario mantiene intactas tus clases y estructura original */
+.login-container {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 123, 255, 0.12);
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #e1ecf4;
+}
 /* Opcional: Asegurar que los inputs y botones también hereden la tipografía */
 input, button, select, textarea {
     font-family: 'Montserrat', sans-serif !important;
